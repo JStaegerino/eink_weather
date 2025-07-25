@@ -169,15 +169,7 @@ sensor:
     on_value: 
       lambda: |-
         id(data_updated) = true;
-
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_rain_0
-    id: weather_rain_0
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;                        
-     
+    
   - platform: homeassistant
     entity_id: sensor.e_paper_display_data
     attribute: weather_temperature_1
@@ -190,14 +182,6 @@ sensor:
     entity_id: sensor.e_paper_display_data
     attribute: weather_templow_1
     id: weather_templow_1
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
-
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_rain_1
-    id: weather_rain_1
     on_value: 
       lambda: |-
         id(data_updated) = true;
@@ -220,14 +204,6 @@ sensor:
 
   - platform: homeassistant
     entity_id: sensor.e_paper_display_data
-    attribute: weather_rain_2
-    id: weather_rain_2
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
-
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
     attribute: weather_temperature_3
     id: weather_temperature_3
     on_value: 
@@ -238,14 +214,6 @@ sensor:
     entity_id: sensor.e_paper_display_data
     attribute: weather_templow_3
     id: weather_templow_3
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
- 
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_rain_3
-    id: weather_rain_3
     on_value: 
       lambda: |-
         id(data_updated) = true;
@@ -266,13 +234,6 @@ sensor:
       lambda: |-
         id(data_updated) = true;
  
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_rain_4
-    id: weather_rain_4
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
 
 # Calendar 
   - platform: homeassistant
@@ -291,15 +252,15 @@ text_sensor:
       name: ${friendly_name} WiFi SSID 
 
 #Weather (condition, day) 
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_alert_now
-    id: weather_alert_now
-    filters:
-      - to_upper:
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
+  # - platform: homeassistant
+  #   entity_id: sensor.e_paper_display_data
+  #   attribute: weather_alert_now
+  #   id: weather_alert_now
+  #   filters:
+  #     - to_upper:
+  #   on_value: 
+  #     lambda: |-
+  #       id(data_updated) = true;
 
   - platform: homeassistant
     entity_id: sensor.e_paper_display_data
@@ -825,35 +786,30 @@ display:
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_0).state.c_str()].c_str());
       it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_0).state);
       it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_0).state);
-      it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_0).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_1).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_1).state.c_str()].c_str());
       it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_1).state);
       it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_1).state);
-      it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_1).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_2).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_2).state.c_str()].c_str());
       it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_2).state);
       it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_2).state);
-      it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_2).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_3).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
       it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_3).state);
       it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_3).state);
-      it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_3).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_4).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_4).state.c_str()].c_str());
       it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_4).state);
       it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_4).state);
-      it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_4).state);        
 
       // Draw vertical line between weather and calendar
       it.line(415, 10, 415, 470);  
@@ -871,18 +827,16 @@ display:
       int todays_date_widths[3] = {day_of_month_width, todays_day_name_width, month_width};
       int max_todays_date_width = find_max_in_array(todays_date_widths, 3);
       int day_name_height = get_text_height( & it, id(font_small), "%s", id(todays_day_name).state.c_str());
-      int day_height = get_text_height( & it, id(font_med_large_bold), "%d", time.day_of_month);
-      int day_name_offset = cal_ystart+day_height-20;
-      int year_offset = day_name_offset+day_name_height+2;
+      int date_height = get_text_height( & it, id(font_med_large_bold), "%d", time.day_of_month);
+      int day_date_offset = cal_ystart+day_name_height+10;
+      int year_offset = day_date_offset+date_height-20;
 
-      it.printf(cal_xstart + max_todays_date_width / 2, cal_ystart, id(font_med_large_bold), TextAlign::TOP_CENTER, "%d", time.day_of_month);
-      it.printf(cal_xstart + max_todays_date_width / 2, day_name_offset, id(font_small), TextAlign::TOP_CENTER, "%s", id(todays_day_name).state.c_str());
+
+      it.printf(cal_xstart + max_todays_date_width / 2, cal_ystart, id(font_small), TextAlign::TOP_CENTER, "%s", id(todays_day_name).state.c_str());
+      it.printf(cal_xstart + max_todays_date_width / 2, day_date_offset, id(font_med_large_bold), TextAlign::TOP_CENTER, "%d", time.day_of_month);
       it.printf(cal_xstart + max_todays_date_width / 2, year_offset, id(font_small), TextAlign::TOP_CENTER, "%s", id(todays_date_month).state.c_str());
-    
 
-
-
-
+      
       // Draw Calendar
 
       int calendar_x_pos = cal_xstart + max_todays_date_width + 40;
@@ -941,9 +895,6 @@ display:
                   days_line_right_position, calendar_y_pos + (cell_size_height / 2));
         }
       }
-
-
-
     
         // End Draw Calendar
 
@@ -1008,88 +959,89 @@ display:
 
           int entry_y_position = current_y_position + events_top_padding; // Initialize entry_y_position to align with the day number + optional padding
     
-          auto processEntry = [ & ](const JsonVariant & item) -> bool {
-            std::string summary = item["summary"].as < std::string > ();
+          auto processEntry = [&](const JsonVariant & item) -> bool {
+            std::string summary = item["summary"].as<std::string>();
             const char * start = item["start"];
             const char * end = item["end"];
             const char * location_name = item["location_name"];
             const char * calendar_name = item["calendar_name"];
 
-            // Create copy we can modify
             int max_event_title_chars = max_event_title_length; 
             int max_event_subtitle_chars = max_event_subtitle_length; 
-    
+
             std::string start_time = start ? extract_time(start) : "";
             std::string end_time = end ? extract_time(end) : "";
-    
-            // start_time == empty => day event (check if multiple days to add that information)
+
             if (start_time.empty()) {
-    
-              // Get current date in format yyyy-mm-dd
               auto get_current_date_str = []() -> std::string {
                 auto time = id(esptime).now();
                 char buffer[11];
                 sprintf(buffer, "%d-%02d-%02d", time.year, time.month, time.day_of_month);
-    
                 return std::string(buffer);
               };
-    
-              // Calculate length of event in days
+
               int days = days_between_dates(start, end);
-    
-              // If event is longer than just today
               if (days > 1) {
                 if (start == get_current_date_str()) {
-                  // Event is today
-                  // Subtract today from the length in days
                   days -= 1;
                   end_time = "left";
                 } else {
                   end_time = "long";
                 }
-    
                 start_time = std::to_string(days) + ((days > 1) ? " days" : " day");
-    
               } else {
-                // Event won't have time information so the title and subtitle can be longer
                 max_event_title_chars += 4;
                 max_event_subtitle_chars += 6;
               }
             }
-    
-            std::string subtitle_string = std::string(calendar_name) + (location_name && strlen(location_name) > 0 ? " · " + std::string(location_name) : "");
+
+            std::string subtitle_string = std::string(calendar_name) + 
+              (location_name && strlen(location_name) > 0 ? " · " + std::string(location_name) : "");
+
             if (subtitle_string.length() > max_event_subtitle_chars) {
               subtitle_string = subtitle_string.substr(0, max_event_subtitle_chars - 3) + "...";
             }
-    
+
             if (summary.length() > max_event_title_chars) {
               summary = summary.substr(0, max_event_title_chars - 3) + "...";
             }
-    
-            int summary_height = get_text_height( & it, id(font_bold_20), "%s", summary.c_str());
-            int time_height = get_text_height( & it, id(font_small), "%s", start_time.c_str());
-   
-            // Check if event will still fit
-            if (entry_y_position + summary_height + time_height + event_spacing <= max_y_position) {
-              // Draw event summary
+
+            // Height calculations
+            int summary_height = get_text_height(&it, id(font_bold_20), "%s", summary.c_str());
+            int time_height = get_text_height(&it, id(font_small), "%s", start_time.c_str());
+            int location_height = 0;
+
+            std::string location_str = "";
+            if (location_name && strlen(location_name) > 0) {
+              location_str = std::string(location_name);
+              location_height = get_text_height(&it, id(font_small), "%s", location_str.c_str());
+            }
+
+            // Check if event fits entirely
+            if (entry_y_position + summary_height + time_height + location_height + event_spacing <= max_y_position) {
+              // Draw event title
               it.printf(event_start_x_position, entry_y_position, id(font_bold_20), TextAlign::TOP_LEFT, "%s", summary.c_str());
-    
               entry_y_position += summary_height + 2;
-    
-              // Draw subtitle string (calendar name and location)
-              //it.printf(start_x_position+55, entry_y_position, id(font_small), TextAlign::TOP_LEFT, "%s", subtitle_string.c_str());
-  
-              // Draw start time
+
+              // Draw start - end time
               if (!start_time.empty()) {
                 it.printf(event_start_x_position, entry_y_position, id(font_small), TextAlign::TOP_LEFT, "%s - %s", start_time.c_str(), end_time.c_str());
+                entry_y_position += time_height + 2;
               }
-    
-              entry_y_position += time_height + event_spacing;
-    
-              // Event drawn - return true
+
+              // Draw location
+              if (!location_str.empty()) {
+                it.printf(event_start_x_position, entry_y_position, id(font_small), TextAlign::TOP_LEFT, "%s", location_str.c_str());
+                entry_y_position += location_height + 2;
+              }
+
+              // Add spacing after event
+              entry_y_position += event_spacing;
+
               return true;
             } else {
-              // Event did not fit and was not drawn - return false
+              // Not enough space to draw event
+              ESP_LOGW("calendar", "Skipping event due to lack of space: %s", summary.c_str());
               return false;
             }
           };
