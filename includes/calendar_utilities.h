@@ -1,45 +1,56 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 int is_leap_year(int year) {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+  return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-void get_calendar_matrix(int year, int month, char cal[7][7][3]) {
-    // Determine the number of days in the month
-    int days_in_month[] = {31, 28 + is_leap_year(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    int num_days = days_in_month[month - 1];
-    
-    // Determine the day of the week for the first day of the month (using Zeller's Congruence)
-    if (month < 3) {
-        month = month + 12;
-        year = year - 1;
+void get_calendar_matrix(int year, int month, char cal[7][7][4]) {
+  // Leere alle Felder mit "" (wichtiger Fix!)
+  for (int i = 0; i < 7; i++) {
+    for (int j = 0; j < 7; j++) {
+      strcpy(cal[i][j], "");
     }
-    int day_of_week = (1 + (13 * (month + 1)) / 5 + year + year / 4 - year / 100 + year / 400) % 7;
-    
-    // Adjust day of week to start from 0 for Sunday
-    //day_of_week = (day_of_week + 5) % 7;
-    day_of_week = (day_of_week + 6) % 7; // Adjust to start from 0 for Sunday
-    
-    // Fill in the weekdays
-    char weekdays[7][3] = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
-    for (int i = 0; i < 7; i++) {
-        strcpy(cal[0][i], weekdays[i]);
+  }
+
+  // Anzahl Tage im Monat
+  int days_in_month[] = {31, 28 + is_leap_year(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  int num_days = days_in_month[month - 1];
+
+  // Zeller's Kongruenz – Monats- & Jahresanpassung
+  int zeller_month = month;
+  int zeller_year = year;
+  if (zeller_month < 3) {
+    zeller_month += 12;
+    zeller_year -= 1;
+  }
+
+  // Zeller's Formel: 0=Sa, 1=So, ..., 6=Fr
+  int h = (1 + (13 * (zeller_month + 1)) / 5 + zeller_year + zeller_year / 4 - zeller_year / 100 + zeller_year / 400) % 7;
+
+  // Wochentag auf Montag=0, Sonntag=6 mappen
+  int start_weekday = (h + 5) % 7;
+
+  // Wochentag-Header (erste Zeile)
+  const char* weekdays[7] = {"Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"};
+  for (int i = 0; i < 7; i++) {
+    strncpy(cal[0][i], weekdays[i], 4);
+  }
+
+  // Tage einfüllen
+  int current_day = 1;
+  for (int row = 1, col = start_weekday; current_day <= num_days;) {
+    for (; col < 7 && current_day <= num_days; col++) {
+      snprintf(cal[row][col], 4, "%d", current_day++);
     }
-    
-    // Fill in the days
-    int current_day = 1 - day_of_week; // Adjust the starting day of the month
-    for (int week_num = 1; week_num < 7; week_num++) {
-        for (int day_num = 0; day_num < 7; day_num++) {
-            if (current_day > 0 && current_day <= num_days) {
-                sprintf(cal[week_num][day_num], "%d", current_day); // Fill in the day
-            } else {
-                strcpy(cal[week_num][day_num], ""); // Empty string for days before the first day or after the last day
-            }
-            current_day++;
-        }
-    }
+    col = 0;
+    row++;
+  }
+
+  // (optional) Leere restliche Felder – bereits durch Initialisierung oben abgedeckt
 }
+
 
 // Convert a date to Julian Day Number
 long date_to_jdn(int year, int month, int day) {

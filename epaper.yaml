@@ -70,7 +70,7 @@ esphome:
 time:
   - platform: homeassistant
     id: esptime
-    timezone: America/Chicago 
+    timezone: Europe/Zurich
     on_time:
       - seconds: 0
         minutes: /1
@@ -130,14 +130,6 @@ sensor:
       lambda: |-
         id(data_updated) = true;
   
-  - platform: homeassistant
-    entity_id: sensor.e_paper_display_data
-    attribute: weather_alert_number
-    id: weather_alert_number
-    on_value: 
-      lambda: |-
-        id(data_updated) = true;
-
   - platform: homeassistant
     entity_id: sensor.e_paper_display_data
     attribute: weather_humid_now
@@ -685,6 +677,8 @@ display:
     full_update_every: 30
     rotation: 0°
     lambda: |-
+      it.fill(Color::WHITE);
+
       std::map<std::string, std::string> moon_icon_map
         {
           {"first_quarter", "G"},
@@ -700,14 +694,14 @@ display:
 
       std::map<std::string, std::string> moon_description
         {
-          {"first_quarter", "First Quarter"},
-          {"full_moon", "Full Moon"},
-          {"last_quarter", "Last Quarter"},
-          {"new_moon", "New Moon"},
-          {"waning_crescent", "Waning Crescent"},
-          {"waning_gibbous", "Waning Gibbous"},
-          {"waxing_crescent", "Waxing Crescent"},
-          {"waxing_gibbous", "Waxing Gibbous"},
+          {"first_quarter", "Erstes Viertel"},
+          {"full_moon", "Vollmond"},
+          {"last_quarter", "Letztes Viertel"},
+          {"new_moon", "Neumond"},
+          {"waning_crescent", "Abnehmende Sichel"},
+          {"waning_gibbous", "Abnehmender Mond"},
+          {"waxing_crescent", "Zunehmende Sichel"},
+          {"waxing_gibbous", "Zunehmender Mond"}
           
         };
 
@@ -765,44 +759,31 @@ display:
       int alert_offset_weather = 0;
       int alert_offset_forecast = 0;
 
-      // If there is an active weather alert, display it
-      if (id(weather_alert_number).state != 0) {
-        // Display the weather alert as white text on a black rectangle
-        int alert_height = get_text_height( & it, id(font_bold_20), "%s", id(weather_alert_now).state.c_str());
-        // draw a black rectangle for the alert
-        it.filled_rectangle(10, wy_offset, 387, alert_height + 10, COLOR_ON);
-        // print the alert text in white
-        it.printf(207, wy_offset+(alert_height-5), id(font_bold_20), COLOR_OFF, TextAlign::CENTER, "%s", id(weather_alert_now).state.c_str());
-        // adjust the subsequent sections spacing because of the alert
-        alert_offset_weather = alert_height+7;  
-        alert_offset_forecast = 15;
-        wy_offset += alert_height + 20;
-      }
 
       //  WEATHER STATE ICON
       it.printf(80, wy_offset, id(font_mdi_large), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_now).state.c_str()].c_str());
       // TEMPERATURE
       it.printf(330, wy_offset+15, id(font_large_bold), TextAlign::TOP_RIGHT, "%.0f", id(weather_temperature_now).state);
-      it.print(330, wy_offset+15, id(font_degree), TextAlign::TOP_LEFT, "°F");   
+      it.print(330, wy_offset+15, id(font_degree), TextAlign::TOP_LEFT, "°C");   
 
       int w_x_offset = 10;  
       int w_y_offset = 170+alert_offset_weather;   
 
-      //  Print rain
-      it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F0E0A");
-      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%%", id(weather_rain_0).state);  
+      //  Print humidity
+      it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F058E");
+      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%%", id(weather_humid_now).state);  
 
       w_x_offset += column2_x_offset; 
 
       //  Print temp low | high
       it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F050F");
-      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f°F | %.0f°F", id(weather_templow_0).state, id(weather_temperature_0).state);
+      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f°C | %.0f°C", id(weather_templow_0).state, id(weather_temperature_0).state);
 
       w_x_offset += column3_x_offset; 
 
-      //  Print apparent temperature
-      it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F1B0F");
-      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%°F",id(weather_apparent_temperature_now).state);
+      // //  Print apparent temperature
+      // it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F1B0F");
+      // it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%°C",id(weather_apparent_temperature_now).state);
 
       w_x_offset = 10; 
       w_y_offset += 45;      
@@ -815,13 +796,13 @@ display:
 
       //  Print windspeed
       it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F059D");
-      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.1f Mph (%s)", id(weather_wind_speed_now).state, id(weather_wind_direction_now).state.c_str());
+      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.1f km/h (%s)", id(weather_wind_speed_now).state, id(weather_wind_direction_now).state.c_str());
 
       w_x_offset += column3_x_offset; 
 
-      //  Print humidity
-      it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F058E");
-      it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%%",id(weather_humid_now).state);   
+      // //  Print humidity
+      // it.printf(w_x_offset, w_y_offset, id(font_mdi_small), TextAlign::CENTER_LEFT, "\U000F058E");
+      // it.printf(w_x_offset+35, w_y_offset, id(font_small_bold), TextAlign::CENTER_LEFT, "%.0f%%",id(weather_humid_now).state);   
 
       w_x_offset = 10; 
       w_y_offset += 45; 
@@ -842,36 +823,36 @@ display:
 
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_0).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_0).state.c_str()].c_str());
-      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°F", id(weather_temperature_0).state);
-      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°F", id(weather_templow_0).state);
+      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_0).state);
+      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_0).state);
       it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_0).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_1).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_1).state.c_str()].c_str());
-      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°F", id(weather_temperature_1).state);
-      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°F", id(weather_templow_1).state);
+      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_1).state);
+      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_1).state);
       it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_1).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_2).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_2).state.c_str()].c_str());
-      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°F", id(weather_temperature_2).state);
-      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°F", id(weather_templow_2).state);
+      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_2).state);
+      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_2).state);
       it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_2).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_3).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
-      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°F", id(weather_temperature_3).state);
-      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°F", id(weather_templow_3).state);
+      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_3).state);
+      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_3).state);
       it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_3).state);
 
       fcst_xstart += fcst_offset;
       it.printf(fcst_xstart, forecast_yoffset,    id(font_small_black), TextAlign::TOP_CENTER, "%s", id(weather_day_4).state.c_str());
       it.printf(fcst_xstart, forecast_yoffset+20, id(font_mdi_medium), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_4).state.c_str()].c_str());
-      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°F", id(weather_temperature_4).state);
-      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°F", id(weather_templow_4).state);
+      it.printf(fcst_xstart, forecast_yoffset+72, id(font_small_bold), TextAlign::TOP_CENTER, "%.0f°c", id(weather_temperature_4).state);
+      it.printf(fcst_xstart, forecast_yoffset+100, id(font_small), TextAlign::TOP_CENTER, "%.0f°c", id(weather_templow_4).state);
       it.printf(fcst_xstart, forecast_yoffset+128, id(font_small), TextAlign::TOP_CENTER, "%.0f%%", id(weather_rain_4).state);        
 
       // Draw vertical line between weather and calendar
@@ -898,56 +879,71 @@ display:
       it.printf(cal_xstart + max_todays_date_width / 2, day_name_offset, id(font_small), TextAlign::TOP_CENTER, "%s", id(todays_day_name).state.c_str());
       it.printf(cal_xstart + max_todays_date_width / 2, year_offset, id(font_small), TextAlign::TOP_CENTER, "%s", id(todays_date_month).state.c_str());
     
+
+
+
+
       // Draw Calendar
 
-      int calendar_x_pos = cal_xstart + max_todays_date_width +40;
-      int calendar_y_pos = cal_ystart+15; 
+      int calendar_x_pos = cal_xstart + max_todays_date_width + 40;
+      int calendar_y_pos = cal_ystart + 15;
       int days_padding_bottom = 5;
       int circle_size = 11;
       int cell_size_width = 35;
       int cell_size_height = 24;
-                
+
+      // Wenn zweistellige Tageszahl → enger machen
       if (time.day_of_month >= 10) {
         cell_size_width = 33;
         calendar_x_pos -= 10;
       }
 
-      auto color_background = Color::BLACK; 
-      char cal[7][7][3]; // Calendar matrix including weekdays
+      auto color_background = Color::BLACK;
+      char cal[7][7][4]; // Tages-Grid inkl. Header
       int days_line_left_position = 0;
       int days_line_right_position = 0;
-  
+
+      // Matrix generieren mit Montag als Wochenstart
       get_calendar_matrix(time.year, time.month, cal);
-    
-        for (int i = 0; i < 7; i++) {
-          for (int j = 0; j < 7; j++) {
-            int x_pos = calendar_x_pos + cell_size_width * j;
-            int y_pos = calendar_y_pos + cell_size_height * i;
-    
-            if (i == 0) {
-              // Header (day names)
-              it.printf(x_pos, y_pos, id(font_small_bold), TextAlign::CENTER, "%s", cal[i][j]);
-              if (j == 0) {
-                days_line_left_position = x_pos - (get_text_width( & it, id(font_footer_normal), "%s", cal[i][j]) / 2);
-              } else if (j == 6) {
-                days_line_right_position = x_pos + (get_text_width( & it, id(font_footer_normal), "%s", cal[i][j]) / 2);
-              }
+
+      for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 7; j++) {
+          int x_pos = calendar_x_pos + cell_size_width * j;
+          int y_pos = calendar_y_pos + cell_size_height * i;
+
+          if (i == 0) {
+            // Header (Wochentage)
+            it.printf(x_pos, y_pos, id(font_small_bold), TextAlign::CENTER, "%s", cal[i][j]);
+
+            // Trennlinien-Anfang und -Ende merken
+            if (j == 0) {
+              days_line_left_position = x_pos - (get_text_width(&it, id(font_footer_normal), "%s", cal[i][j]) / 2);
+            } else if (j == 6) {
+              days_line_right_position = x_pos + (get_text_width(&it, id(font_footer_normal), "%s", cal[i][j]) / 2);
+            }
+
+          } else {
+            // Tageszahlen
+            y_pos += days_padding_bottom;
+            if (atoi(cal[i][j]) == time.day_of_month) {
+              // Heutiger Tag hervorheben
+              it.filled_circle(x_pos, y_pos - 3, circle_size);
+              it.printf(x_pos, y_pos, id(font_footer_normal), color_background, TextAlign::CENTER, "%s", cal[i][j]);
             } else {
-              // Day numbers
-              y_pos += days_padding_bottom;
-              if (atoi(cal[i][j]) == time.day_of_month) {
-                // Highlight current day
-                it.filled_circle(x_pos, y_pos - 3, circle_size);
-                it.printf(x_pos, y_pos, id(font_footer_normal), color_background, TextAlign::CENTER, "%s", cal[i][j]);
-              } else {
-                it.printf(x_pos, y_pos, id(font_footer_normal), TextAlign::CENTER, "%s", cal[i][j]);
-              }
+              it.printf(x_pos, y_pos, id(font_footer_normal), TextAlign::CENTER, "%s", cal[i][j]);
             }
           }
-          if (i == 1) {
-            it.line(days_line_left_position, calendar_y_pos + (cell_size_height / 2), days_line_right_position, calendar_y_pos + (cell_size_height / 2));
-          }
         }
+
+        // Linie unterhalb der Headerzeile (nach i == 0)
+        if (i == 1) {
+          it.line(days_line_left_position, calendar_y_pos + (cell_size_height / 2),
+                  days_line_right_position, calendar_y_pos + (cell_size_height / 2));
+        }
+      }
+
+
+
     
         // End Draw Calendar
 
@@ -956,7 +952,9 @@ display:
         DynamicJsonDocument doc(4096);
         deserializeJson(doc, id(calendar_json).state.c_str());
         JsonArray entries = doc.as<JsonArray>();
-    
+        ESP_LOGD("calendar", "Calendar JSON: %s", id(calendar_json).state.c_str());
+
+
         int current_y_position = cal_ystart+170; // Initial vertical position
         int start_x_position = cal_xstart; // Initial horizontal position
         int date_event_line_padding = 10; // Padding between date and event line
